@@ -9,13 +9,13 @@ import Accelerate
 	Note: A is transposed from how it has to be with LAPACK!
 */
 
-var A:[Float] = [
+var A: [Float] = [
 	3, 1, 2,
 	1, 5, 6,
 	3, 9, 5
 ]
 
-var b:[Float] = [ -1, 3, -3 ]
+var b: [Float] = [ -1, 3, -3 ]
 var x = [Float](count: 3, repeatedValue:0)
 
 // First transform A and b into the world of LinearAlgebra objects (la_object_t)
@@ -48,7 +48,7 @@ if status == 0 {
 } else if status > 0 {
 	println("Worked, but accuracy is poor")
 } else {
-	println("FALID")
+	println("FAILED")
 }
 println()
 println( "Answer: \(x)" )
