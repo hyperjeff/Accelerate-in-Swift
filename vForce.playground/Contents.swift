@@ -20,7 +20,7 @@ vvfabsf( &aAbsolute, &a, &count )
 aAbsolute
 
 //:### Lessons:
-//: * Docs claim y[i] = abs(x[i]-1), but it's actually abs(x[i]). Docs falable.
+//: * Docs claim y[i] = abs(x[i]-1), but it's actually abs(x[i]). Docs fallable.
 //: * "count" needs to be Int32, not just Int
 
 //:## Example: Integers from Floats
