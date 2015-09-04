@@ -1,48 +1,58 @@
 //:# vDSP: Fast Fourier Transforms
 // Example code from Jeff Biggus @hyperjeff
 // Share, use, enhance
-
 import Accelerate
-
-let sampleSize = 500
-let sampleLength = vDSP_Length(sampleSize)
-var data = [Float](count: sampleSize, repeatedValue:0.0)
-for i in 0..<sampleSize {
-	let noise = Float(random())/Float(RAND_MAX)
-//	data[i] = noise
-//	data[i] = Float(random()) * sin(Float(i)) * sin(Float(4*i)) * sin(Float(4*i))/Float(RAND_MAX)
-	data[i] = sin(Float(i)/30.0)
-//	data[i] = sin(Float(i)/30.0) * sin(Float(i)/60.0) * sin(Float(i)/60.0)
-//	data[i] = sin(Float(i)/30.0) + 0.5 * sin(Float(i)/10.0) + noise
-//	data[i] = sin(Float(i)/30.0) + Float(random())/(Float(RAND_MAX) * 2.0)
-//	data[i] = Float(random()) * (sin(Float(i)/3.0))/Float(RAND_MAX)
-//	data[i] = Float(random()) * (ceil(sin(Float(i)/3.0))-0.5)/Float(RAND_MAX)
+//:## Setup
+enum InputSignal { // kinds of signals. See next section for how they're made
+	case Noise, Sine, Sines, NoisySinesA, NoisySinesB, NoisySinesC, NoisySinesD, NoisySinesE
 }
+func floats(n: Int)->[Float] {
+	return [Float](count:n, repeatedValue:0)
+}
+var ƒ: Float -> Float
+func frandom() -> Float { return Float(random()) / Float( RAND_MAX ) }
+let stride1: vDSP_Stride = 1
+let stride2:vDSP_Stride = 2
+//:## Pick your signal and pick your sample size:
+let signal: InputSignal = .Sine
+let sampleSize = 500
+//:## A little more setup, now that we have the signal and sample size
+let sampleLength = vDSP_Length(sampleSize)
+var start: Float = 0
+var increment: Float = 1
+var ramp = floats( sampleSize )
+vDSP_vramp( &start, &increment, &ramp, stride1, vDSP_Length( sampleSize ) )
+var data = floats(sampleSize)
+//:## Define how each signal is created
+do {switch signal {
+case .Sine: ƒ = { sin( $0 / 3 ) }
+case .Sines: ƒ = { sin( $0 / 3 ) * sin( $0 / 6 ) * sin( $0 / 12 ) }
+case .Noise: ƒ = { frandom() + $0 - $0 }
+case .NoisySinesA: ƒ = { sin( $0 / 3 ) + frandom() / 2 }
+case .NoisySinesB: ƒ = { sin( $0 / 3 ) + 0.5 * sin( $0 / 1 ) + frandom() }
+case .NoisySinesC: ƒ = { frandom() * sin( $0 / 3 ) }
+case .NoisySinesD: ƒ = { frandom() * sin( $0 ) * sin( 4 * $0 ) * sin( 4 * $0 ) }
+case .NoisySinesE: ƒ = { frandom() * (ceil( sin( $0 / 3 ) ) - 0.5) }
+}}
+data = ramp.map( ƒ )
 data.map { $0 }
-
+//:## Set up for doing an FFT
 let log2n: vDSP_Length = vDSP_Length(log2f(Float(sampleSize)))
 let fftSetup = vDSP_create_fftsetup(log2n, FFTRadix(FFT_RADIX2))
 let nOver2 = sampleSize/2
-
-var Arealp = [Float](count:nOver2 * sizeof(Float), repeatedValue:0.0)
-var Aimagp = [Float](count:nOver2 * sizeof(Float), repeatedValue:0.0)
-var A = DSPSplitComplex(realp: &Arealp, imagp: &Aimagp)
-
-let stride: vDSP_Stride = 1
-let stride2:vDSP_Stride = 2
-
 let nOver2Length = vDSP_Length(nOver2)
-
+var real = floats(nOver2 * sizeof(Float))
+var imaginary = floats(nOver2 * sizeof(Float))
+var splitComplex = DSPSplitComplex(realp: &real, imagp: &imaginary)
+//:## Calculate the FFT
 data.withUnsafeBufferPointer { (dataPointer: UnsafeBufferPointer<Float>) -> Void in
 	var complexData = UnsafePointer<DSPComplex>( dataPointer.baseAddress )
-	vDSP_ctoz(complexData, stride2, &A, stride, nOver2Length)
-	vDSP_fft_zrip(fftSetup, &A, stride, log2n, FFTDirection(FFT_FORWARD))
+	vDSP_ctoz(complexData, stride2, &splitComplex, stride1, nOver2Length)
+	vDSP_fft_zrip(fftSetup, &splitComplex, stride1, log2n, FFTDirection(FFT_FORWARD))
 }
-
-let ampCount: Int = sampleSize / 50
-var amp = [Float](count: ampCount, repeatedValue: 0.0)
-amp[0] = A.realp[0] / Float(sampleSize * 2)
-for i in 1..<ampCount {
-	amp[i] = A.realp[i] * A.realp[i] + A.imagp[i] * A.imagp[i]
-}
-amp.map { $0 }
+//:## Take a look at the amplitudes of the frequencies
+let amplitudeCount = sampleSize / 10
+var amplitudes = floats( amplitudeCount )
+vDSP_zvmags( &splitComplex, stride1, &amplitudes, stride1, vDSP_Length( amplitudeCount ) )
+amplitudes[0] = splitComplex.realp[0] / Float(sampleSize * 2)
+amplitudes.map { $0 }
