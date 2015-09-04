@@ -2,8 +2,8 @@
 // Example code from Jeff Biggus @hyperjeff
 // Share, use, enhance
 import Accelerate
-//:## Setup
-enum InputSignal { // kinds of signals. See next section for how they're made
+//:## Setup. See section down below to see what the input signals are and how to customize them
+enum InputSignal {
 	case Noise, Sine, Sines, NoisySinesA, NoisySinesB, NoisySinesC, NoisySinesD, NoisySinesE
 }
 func floats(n: Int)->[Float] {
@@ -24,7 +24,7 @@ var ramp = floats( sampleSize )
 vDSP_vramp( &start, &increment, &ramp, stride1, vDSP_Length( sampleSize ) )
 var data = floats(sampleSize)
 //:## Define how each signal is created
-do {switch signal {
+switch signal {
 case .Sine: ƒ = { sin( $0 / 3 ) }
 case .Sines: ƒ = { sin( $0 / 3 ) * sin( $0 / 6 ) * sin( $0 / 12 ) }
 case .Noise: ƒ = { frandom() + $0 - $0 }
@@ -33,7 +33,7 @@ case .NoisySinesB: ƒ = { sin( $0 / 3 ) + 0.5 * sin( $0 / 1 ) + frandom() }
 case .NoisySinesC: ƒ = { frandom() * sin( $0 / 3 ) }
 case .NoisySinesD: ƒ = { frandom() * sin( $0 ) * sin( 4 * $0 ) * sin( 4 * $0 ) }
 case .NoisySinesE: ƒ = { frandom() * (ceil( sin( $0 / 3 ) ) - 0.5) }
-}}
+}
 data = ramp.map( ƒ )
 data.map { $0 }
 //:## Set up for doing an FFT
@@ -44,7 +44,7 @@ let nOver2Length = vDSP_Length(nOver2)
 var real = floats(nOver2 * sizeof(Float))
 var imaginary = floats(nOver2 * sizeof(Float))
 var splitComplex = DSPSplitComplex(realp: &real, imagp: &imaginary)
-//:## Calculate the FFT
+//:## Calculate a 1-d real-valued, discrete Fourier transform, from time domain to frequency domain
 data.withUnsafeBufferPointer { (dataPointer: UnsafeBufferPointer<Float>) -> Void in
 	var complexData = UnsafePointer<DSPComplex>( dataPointer.baseAddress )
 	vDSP_ctoz(complexData, stride2, &splitComplex, stride1, nOver2Length)
