@@ -13,10 +13,10 @@ let stride1:vDSP_Stride = 1
 
 count = 10
 var start: Float = -3
-var end:   Float =  0.1
+var increment:   Float =  0.1
 var ramp = [Float](count:Int(count), repeatedValue:0)
 
-vDSP_vramp( &start, &end, &ramp, stride1, count )
+vDSP_vramp( &start, &increment, &ramp, stride1, count )
 
 ramp.map { $0 }
 
