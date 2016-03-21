@@ -26,10 +26,12 @@ struct Complex {
 	var imag: Float
 	
 	var description: String {
-		if real > 0.00000001 && imag > 0.00000001 {
+		let threshold = 0.00000001
+		
+		if fabsf(real) > threshold && fabsf(imag) > threshold {
 			return "\(real) + \(imag) i"
 		}
-		else if imag > 0.00000001 {
+		else if fabsf(imag) > threshold {
 			return "\(imag) i"
 		}
 		else {
@@ -49,7 +51,7 @@ d[1].description
 
 //: For fun, using ¡ as a postfix operator
 
-postfix operator ¡ { }
+postfix operator ¡ {}
 postfix func ¡ (x: Float) -> Complex {
 	return Complex(real: 0, imag: x)
 }
@@ -73,4 +75,4 @@ f[1].description
 
 //: Dot product of complex vectors:
 
-var g: [Complex] = [ ]
+var g: [Complex] = []
