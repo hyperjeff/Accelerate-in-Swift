@@ -8,7 +8,7 @@ typealias LAInt = __CLPK_integer
 
 // Source: http://physics-simulation.blogspot.com/2007/10/solving-schrodinger-equation-linear.html
 
-let N = 20
+let N = 80
 let dx = 10 / Double(N)
 let dx² = dx * dx
 
@@ -55,4 +55,5 @@ for i in 0..<N-2 {
 	z[8*m + i]
 	z[9*m + i]
 }
- //:## Note: After difficult setup, ONE line of code for solution
+
+//:### Note: After difficult setup, ONE line of code for solution
