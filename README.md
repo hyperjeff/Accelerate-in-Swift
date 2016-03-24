@@ -1,5 +1,3 @@
-# CocoaConf_2015_Chicago_Accelerate
+# Accelerate Playgrounds!
 
-These files require Xcode 6.3 (maybe 7.0) / Swift 2.0 and above.
-
-The file "LinearAlgebra.swift" cannot be run in a playground as of Xcode 6.3b4, and must be run from the command line (or in an Xcode project).
+These files require Xcode 7.3 / Swift 2.x and above.
