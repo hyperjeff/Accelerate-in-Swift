@@ -1,12 +1,10 @@
-//:# LAPACK
-//:## Schrödinger Solutions for 1-d Square Well
-// Example code from Jeff Biggus @hyperjeff
-// Share, use, enhance
-
+/*:
+# LAPACK: Schrödinger Solutions for 1-d Square Well
+_Jeff Biggus (@hyperjeff) March, 2016_
+- Note: The makes use of the work done here: http://physics-simulation.blogspot.com/2007/10/solving-schrodinger-equation-linear.html
+*/
 import Accelerate
 typealias LAInt = __CLPK_integer
-
-// Source: http://physics-simulation.blogspot.com/2007/10/solving-schrodinger-equation-linear.html
 
 let N = 80
 let dx = 10 / Double(N)
@@ -27,21 +25,15 @@ for i in 0..<N {
 	v[i] =  fabs(Double(i+1) * dx - 5) < 1 ? 0 : 1
 	hDiag[i] = 2.0 + 2.0 * dx² * v[i]
 }
-
-
+//:### The main event:
 dstev_( &jobType, &n, &hDiag, &hOff, &z, &ldz, &work, &info )
 
-
 info == 0 ? "Worked!" : "Failed"
-
-// lowest 4 Eigenvalues:
+//:### The lowest 4 Eigenvalues:
 for i in 0..<N-1 {
 	hDiag[i] / (2 * dx²)
 }
-
-// lowest 4 Eigenvectors
-// x groundstate 1st 2nd 3rd
-
+//:### The lowest 4 Eigenvectors. Groundstate, 1st, 2nd, 3rd, ...
 for i in 0..<N-2 {
 	let m = N-1
 	z[i]

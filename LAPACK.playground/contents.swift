@@ -1,25 +1,23 @@
-//:# LAPACK
-//:## Linear Algebra Package
-// Example code from Jeff Biggus @hyperjeff
-// Share, use, enhance
-
+/*:
+# LAPACK: Linear Algebra Package
+_Jeff Biggus (@hyperjeff) March, 2016_
+*/
 import Accelerate
 typealias LAInt = __CLPK_integer // = Int32
-//:## Solving A x = b for x
-
-/*
+/*:
+## Solving A x = b for x
+- Example:
 	Idea: Solving simultaneous equations.
 	
-	3x +  y + 2z = -1
-	 x + 5y + 6z =  3
+	3x +  y + 2z = -1\
+	 x + 5y + 6z =  3\
 	3x + 9y + 5z = -3
 
 	Question: what's x, y and z?
-
-	Note: the way A is set up may look flipped (LAPACK convention)
+- Note: The way A is set up may look flipped (LAPACK convention)
+- Note: LAPACK functions are particularly horribly named, but there is a good resource for finding your way around on the [LAPACK Site](http://www.netlib.org/lapack/explore-html/).
+- Note: The output is very often over-writes one of the variables passed in, so if you need to use that thing later, make yourself a copy.
 */
-
-
 var A:[Float] = [
 	3, 1, 3,
 	1, 5, 9,
@@ -44,13 +42,9 @@ outputOk // 0 = everything went ok
 
 pivot // this gives an information about how the equations were solved
 
-b
-
-// Now to show the solutions really work:
-
+b  // this is our answer (it over-writes its original value)
+//:### Now to show the solutions really work:
 3 * b[0] +     b[1] + 2 * b[2]
     b[0] + 5 * b[1] + 6 * b[2]
 3 * b[0] + 9 * b[1] + 5 * b[2]
-
-// the solution is good!
-
+//:### the solution is good!

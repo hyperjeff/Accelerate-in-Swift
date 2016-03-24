@@ -1,7 +1,7 @@
-//:# vDSP: Vectory Distances
-// Example code from Jeff Biggus @hyperjeff
-// Share, use, enhance
-
+/*:
+# vDSP: Distances Along a 2-d Path
+_Jeff Biggus (@hyperjeff) March, 2016_
+*/
 import Cocoa
 import Accelerate
 
@@ -22,27 +22,20 @@ path.moveToPoint(points[0])
 for i in 1..<points.count {
 	path.lineToPoint(points[i])
 }
-
+//:## Let's say you have a set of points describing a path:
 path
-
-var xs = [Float](count: points.count, repeatedValue:0)
-var ys = [Float](count: points.count, repeatedValue:0)
-
-for i in 0..<points.count {
-	xs[i] = Float(points[i].x)
-	ys[i] = Float(points[i].y)
-}
+/*:
+## How far are we from the origin at each step?
+- Note: Put away that geometry book! (Actually, no, go ahead, geometry is great, just not needed here.) We have a distance function in the vDSP library! A few lines of set-up code and then a one-liner, and we get each leg's distance as an array.
+*/
+var xs = points.flatMap { Float($0.x) }
+var ys = points.flatMap { Float($0.y) }
 
 var distance = [Float](count: points.count, repeatedValue:0)
 
-let stride1:vDSP_Stride = 1
-let length = vDSP_Length(points.count)
+vDSP_vdist(&xs, 1, &ys, 1, &distance, 1, vDSP_Length(points.count))
 
-
-vDSP_vdist(&xs, stride1, &ys, stride1, &distance, stride1, length)
-
-
-distance
-
+distance.map { $0 }
+//:## Total distance
 distance.reduce(0, combine: +)
 
