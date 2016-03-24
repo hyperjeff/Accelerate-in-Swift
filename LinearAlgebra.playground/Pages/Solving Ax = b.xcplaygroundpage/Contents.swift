@@ -1,9 +1,9 @@
 /*:
+[Previous](@previous) | [Next](@next)
 # LinearAlgebra:  Solivng A x = b for x
 _Jeff Biggus (@hyperjeff) March, 2016_
 */
 import Accelerate
-
 //: - Note: A is transposed from how it has to be with LAPACK!
 var A: [Float] = [
 	3, 1, 2,
@@ -18,9 +18,6 @@ let count1 = la_count_t(1) // to help with clarity
 let count3 = la_count_t(3)
 let index1 = la_index_t(1)
 
-// la_hint_t(LA_NO_HINT) = 0
-// la_attribute_t(LA_DEFAULT_ATTRIBUTES) = 0
-
 let A™ = la_matrix_from_float_buffer( &A, count3, count3, count3, 0, 0 )
 let b™ = la_matrix_from_float_buffer( &b, count3, count1, count1, 0, 0 )
 
@@ -29,7 +26,12 @@ let x™ = la_solve( A™, b™ )
 let status = la_vector_to_float_buffer( &x, index1, x™ )
 
 x // our answer! It's over there ➤
-//: - Note: Returning LA objects give you a status update on how things went
+/*:
+- Note: Returning LA objects give you a status update on how things went
+- Note: You can pass "hints" to the above matrix maker, in order to tell it, for instance, type of matrix (symmetric, diagonal, etc), which also helps performance. In the above, 0 = LA_NO_HINT.
+- Note: You can also pass attribute information. In the above, 0 = default attributes. You can also enable logging.
+- Note: It is best to delay error checking until the very end, because it triggers any not-yet-done computations, and any code above will gracefully propagate its errors down the equation graph. The debug logging in the last note lets you track down where any problems happened in the chain. 
+*/
 if status == 0 {
 	"Worked!"
 } else if status > 0 {
