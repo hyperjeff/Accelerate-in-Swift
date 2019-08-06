@@ -15,7 +15,7 @@ var count: vDSP_Length
 count = 10
 var start: Float = -3
 var increment: Float =  0.1
-var ramp = [Float](count:Int(count), repeatedValue:0)
+var ramp = [Float](unsafeUninitializedCapacity:Int(count), initializingWith: {_, _ in})
 
 vDSP_vramp( &start, &increment, &ramp, 1, count )
 
@@ -29,7 +29,7 @@ data = [0,0,0,0,9,-4,7,10,6,-8,9,-14,3,-4,-6,-8,8,7,4,2,0,0,0,0]
 data.map { $0 }
 
 count = vDSP_Length(data.count)
-output = [Float](count:Int(count), repeatedValue:0)
+output = [Float](unsafeUninitializedCapacity:Int(count), initializingWith: {_, _ in})
 
 vDSP_vabs( &data, 1, &output, 1, count )
 

@@ -6,21 +6,21 @@ import Cocoa
 import Accelerate
 
 var points:[CGPoint] = [
-	CGPointMake( -40,   0),
-	CGPointMake(  35,  40),
-	CGPointMake(  30,  70),
-	CGPointMake( 110,  20),
-	CGPointMake(  10, -10),
-	CGPointMake( -20, -70),
-	CGPointMake(-110, -20),
-	CGPointMake(  20, -40),
-	CGPointMake(   0,   0)
+    CGPoint(x:  -40, y:   0),
+    CGPoint(x:   35, y:  40),
+    CGPoint(x:   30, y:  70),
+    CGPoint(x:  110, y:  20),
+    CGPoint(x:   10, y: -10),
+    CGPoint(x:  -20, y: -70),
+    CGPoint(x: -110, y: -20),
+    CGPoint(x:   20, y: -40),
+    CGPoint(x:    0, y:   0)
 ]
 
 let path = NSBezierPath()
-path.moveToPoint(points[0])
+path.move(to: points[0])
 for i in 1..<points.count {
-	path.lineToPoint(points[i])
+    path.line(to: points[i])
 }
 //:## Let's say you have a set of points describing a path:
 path
@@ -28,14 +28,14 @@ path
 ## How far are we from the origin at each step?
 - Note: Put away that geometry book! (Actually, no, go ahead, geometry is great, just not needed here.) We have a distance function in the vDSP library! A few lines of set-up code and then a one-liner, and we get each leg's distance as an array.
 */
-var xs = points.flatMap { Float($0.x) }
-var ys = points.flatMap { Float($0.y) }
+var xs = points.compactMap { Float($0.x) }
+var ys = points.compactMap { Float($0.y) }
 
-var distance = [Float](count: points.count, repeatedValue:0)
+var distance = [Float](unsafeUninitializedCapacity: points.count, initializingWith: {_, _ in})
 
 vDSP_vdist(&xs, 1, &ys, 1, &distance, 1, vDSP_Length(points.count))
 
 distance.map { $0 }
 //:## Total distance
-distance.reduce(0, combine: +)
+distance.reduce(0, +)
 

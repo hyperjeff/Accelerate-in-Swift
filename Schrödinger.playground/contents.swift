@@ -10,11 +10,11 @@ let N = 80
 let dx = 10 / Double(N)
 let dx² = dx * dx
 
-var hDiag = [Double](count:  N, repeatedValue: 0)
-var hOff  = [Double](count:  N, repeatedValue:-1)
-var v     = [Double](count:  N, repeatedValue: 0)
-var work  = [Double](count:2*N, repeatedValue: 0)
-var z     = [Double](count:N*N, repeatedValue: 0)
+var hDiag = Array<Double>(repeating:  0, count: N)
+var hOff  = Array<Double>(repeating: -1, count: N)
+var v     = Array<Double>(repeating:  0, count: N)
+var work  = Array<Double>(repeating:  0, count: 2 * N)
+var z     = Array<Double>(repeating:  0, count: N * N)
 
 var n:      LAInt = LAInt(N-1)
 var ldz:    LAInt = n

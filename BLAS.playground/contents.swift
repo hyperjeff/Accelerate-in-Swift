@@ -9,8 +9,8 @@ import Accelerate
 Here we will find **10 * x + y** for a 3 element array.
 - Note: It's useful to add a comment above the code illustrating what you think the function is doing, because it's easy to grab the wrong function and very hard to figure out what you meant without such notes. Often there's enough room to align the math right over the variables.
 */
-var x:[Float] = [ 1, 2, 3 ]
-var y:[Float] = [ 3, 4, 5 ]
+var x: [Float] = [1, 2, 3]
+var y: [Float] = [3, 4, 5]
 
 //              10 * x    + y
 
@@ -27,14 +27,14 @@ y = [ 3, 4, 5 ]
 cblas_sdot( 3, &x, 1, &y, 1 )   // == 1*3 + 2*4 + 3*5
 //: ----
 //:## Scale a vector by some value
-var z:[Float] = [1,2,3,4,5,6]
+var z: [Float] = [1, 2, 3, 4, 5, 6]
 
 //              10 * z
 
-cblas_sscal( 6, 10, &z, 1 )
+cblas_sscal(6, 10, &z, 1)
 z
 
 //              100 * z  for every other element
 
-cblas_sscal( 6, 100, &z, 2 )
-z
+cblas_sscal(6, 100, &z, 2)
+//z
