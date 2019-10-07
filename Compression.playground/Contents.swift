@@ -15,15 +15,15 @@ high speed + energy efficiency
 
 All optimzed on Apple hardware, so better than just using usual zlib
 */
-let source:[UInt8] = [1,4,9,8,6,3,0,2,9,2]
+let source:[UInt8] = [1, 4, 9, 8, 6, 3, 0, 2, 9, 2]
 let destinationCapacity = size_t(30)
-var destination = [UInt8](count: Int(destinationCapacity), repeatedValue:0)
+var destination = [UInt8](unsafeUninitializedCapacity: Int(destinationCapacity), initializingWith: {_, _ in})
 
 let destinationSize = compression_encode_buffer(&destination, destinationCapacity, source, source.count, nil, COMPRESSION_LZFSE)
 
 destination
 
-var returnBuffer = [UInt8](count: source.count, repeatedValue:0)
+var returnBuffer = [UInt8](unsafeUninitializedCapacity: source.count, initializingWith: {_, _ in})
 
 compression_decode_buffer(&returnBuffer, source.count, destination, destinationSize, nil, COMPRESSION_LZFSE)
 

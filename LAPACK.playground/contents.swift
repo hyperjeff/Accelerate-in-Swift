@@ -34,7 +34,7 @@ var elementsInB:      LAInt = 3
 var bSolutionCount:   LAInt = 1
 
 var outputOk: LAInt = 0
-var pivot = [LAInt](count: equations, repeatedValue: 0)
+var pivot = [LAInt](unsafeUninitializedCapacity: equations, initializingWith: {_, _ in})
 
 sgesv_( &numberOfEquations, &bSolutionCount, &A, &columnsInA, &pivot, &b, &elementsInB, &outputOk)
 
