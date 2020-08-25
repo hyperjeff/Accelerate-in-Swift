@@ -47,20 +47,26 @@ let nOver2 = sampleSize/2
 let nOver2Length = vDSP_Length(nOver2)
 var real = floats(nOver2)
 var imaginary = floats(nOver2)
-var splitComplex = DSPSplitComplex(realp: &real, imagp: &imaginary)
+real.withUnsafeMutableBufferPointer {realBP in
+    imaginary.withUnsafeMutableBufferPointer {imaginaryBP in
+        var splitComplex = DSPSplitComplex(realp: realBP.baseAddress!, imagp: imaginaryBP.baseAddress!)
+
 //:## Calculate a 1-d real-valued, discrete Fourier transform, from time domain to frequency domain
 //:- Note: This is perhaps the most unusual part. We grab a pointer to the data's baseAddress.
-data.withUnsafeBufferPointer { buffer in
-    buffer.baseAddress!.withMemoryRebound(to: DSPComplex.self, capacity: buffer.count / 2) { body in
-        vDSP_ctoz(body, stride2, &splitComplex, stride1, nOver2Length)
-        vDSP_fft_zrip(fftSetup, &splitComplex, stride1, log2n, FFTDirection(FFT_FORWARD))
+        data.withUnsafeBufferPointer { buffer in
+            buffer.baseAddress!.withMemoryRebound(to: DSPComplex.self, capacity: buffer.count / 2) { body in
+                vDSP_ctoz(body, stride2, &splitComplex, stride1, nOver2Length)
+                vDSP_fft_zrip(fftSetup, &splitComplex, stride1, log2n, FFTDirection(FFT_FORWARD))
+            }
+        }
+
+//:## Take a look at the amplitudes of the frequencies
+        let amplitudeCount = sampleSize / 10
+        var amplitudes = floats( amplitudeCount )
+
+        vDSP_zvmags( &splitComplex, stride1, &amplitudes, stride1, vDSP_Length( amplitudeCount ) )
+
+        amplitudes[0] = splitComplex.realp[0] / Float(sampleSize * 2)
+        amplitudes.map { $0 }
     }
 }
-//:## Take a look at the amplitudes of the frequencies
-let amplitudeCount = sampleSize / 10
-var amplitudes = floats( amplitudeCount )
-
-vDSP_zvmags( &splitComplex, stride1, &amplitudes, stride1, vDSP_Length( amplitudeCount ) )
-
-amplitudes[0] = splitComplex.realp[0] / Float(sampleSize * 2)
-amplitudes.map { $0 }

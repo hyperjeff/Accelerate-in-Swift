@@ -1,7 +1,7 @@
 import Cocoa
 import CoreImage
 import Accelerate
-import XCPlayground
+import PlaygroundSupport
 
 let cookiesURL = NSURL(fileURLWithPath: Bundle.main.pathForImageResource("boobie.png")!)
 let imageSource = CGImageSourceCreateWithURL(cookiesURL, nil)
@@ -71,5 +71,5 @@ class Controller: NSViewController {
 let controller = Controller()
 controller.view = playgroundView
 
-XCPlaygroundPage.currentPage.liveView = playgroundView
-XCPlaygroundPage.currentPage.needsIndefiniteExecution = true
+PlaygroundPage.current.liveView = playgroundView
+PlaygroundPage.current.needsIndefiniteExecution = true

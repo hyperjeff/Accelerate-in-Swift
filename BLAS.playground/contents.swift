@@ -37,4 +37,4 @@ z
 //              100 * z  for every other element
 
 cblas_sscal(6, 100, &z, 2)
-//z
+z

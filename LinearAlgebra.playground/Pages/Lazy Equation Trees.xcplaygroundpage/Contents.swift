@@ -11,7 +11,7 @@ let aAsMatrix = la_matrix_from_float_buffer( &aSourceOfFloats, 1, 6, 6, 0, 0 )
 
 let aVector = la_vector_from_matrix_row(aAsMatrix, 0)
 
-var aCheckOnThatVector = [Float](count: 6, repeatedValue: 0)
+var aCheckOnThatVector = [Float](repeating: 0, count: 6)
 
 la_vector_to_float_buffer(&aCheckOnThatVector, 1, aVector)
 
@@ -21,15 +21,15 @@ aCheckOnThatVector
 /*:
 ### So let's turn that into a convenient function (why isn't there one?)
 */
-func la_vector(vector: [Float]) -> la_object_t {
+func la_vector(_ vector: [Float]) -> la_object_t {
 	var floats = vector
 	let count = la_count_t(floats.count)
 	let floatsAsMatrix = la_matrix_from_float_buffer( &floats, 1, count, count, 0, 0 )
 	return la_vector_from_matrix_row(floatsAsMatrix, 0)
 }
 
-func vectorAsFloats(vector: la_object_t) -> [Float] {
-	var vectorAsFloats = [Float](count: Int(la_vector_length(vector)), repeatedValue:0)
+func vectorAsFloats(_ vector: la_object_t) -> [Float] {
+    var vectorAsFloats = [Float](repeating: 0, count: Int(la_vector_length(vector)))
 	la_vector_to_float_buffer(&vectorAsFloats, 1, vector)
 	return vectorAsFloats
 }

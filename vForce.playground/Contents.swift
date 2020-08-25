@@ -5,7 +5,7 @@ _Jeff Biggus (@hyperjeff) March, 2016_
 import Accelerate
 
 func floats(n: Int32) -> [Float] {
-    return [Float](unsafeUninitializedCapacity: Int(n), initializingWith: {_, _ in})
+    return [Float](repeating: 0.0, count: Int(n))
 }
 /*:
 ## Example: Absolute values

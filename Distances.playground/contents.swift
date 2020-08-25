@@ -31,7 +31,7 @@ path
 var xs = points.compactMap { Float($0.x) }
 var ys = points.compactMap { Float($0.y) }
 
-var distance = [Float](unsafeUninitializedCapacity: points.count, initializingWith: {_, _ in})
+var distance = [Float](repeating: 0.0, count: points.count);
 
 vDSP_vdist(&xs, 1, &ys, 1, &distance, 1, vDSP_Length(points.count))
 

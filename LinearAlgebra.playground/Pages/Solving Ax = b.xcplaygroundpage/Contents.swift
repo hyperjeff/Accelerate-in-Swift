@@ -12,7 +12,7 @@ var A: [Float] = [
 ]
 
 var b: [Float] = [ -1, 3, -3 ]
-var x = [Float](count: 3, repeatedValue:0)
+var x = [Float](repeating: 0.0, count: 3)
 //: ### First transform A and b into the world of LinearAlgebra objects (la_object_t)
 let count1 = la_count_t(1) // to help with clarity
 let count3 = la_count_t(3)
