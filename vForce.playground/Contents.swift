@@ -4,8 +4,8 @@ _Jeff Biggus (@hyperjeff) March, 2016_
 */
 import Accelerate
 
-func floats(n: Int32)->[Float] {
-	return [Float](count:Int(n), repeatedValue:0)
+func floats(n: Int32) -> [Float] {
+    return [Float](repeating: 0.0, count: Int(n))
 }
 /*:
 ## Example: Absolute values
@@ -13,10 +13,10 @@ func floats(n: Int32)->[Float] {
 - Note: "count" needs to be Int32, not just Int
 */
 var count: Int32 = 4
-var a:[Float] = [3,-2,5,-10]
-var aAbsolute = floats(count)
+var a: [Float] = [3, -2, 5, -10]
+var aAbsolute = floats(n: count)
 
-vvfabsf( &aAbsolute, &a, &count )
+vvfabsf(&aAbsolute, &a, &count)
 
 aAbsolute
 /*:
@@ -24,50 +24,50 @@ aAbsolute
 - Note: Sometimes NO variables in the docs at all!
 */
 count = 3
-var b:[Float] = [3.3796, 1.8036, -2.1205]
-var bInt = floats(count)
+var b: [Float] = [3.3796, 1.8036, -2.1205]
+var bInt = floats(n: count)
 
-vvintf( &bInt, &b, &count )
+vvintf(&bInt, &b, &count)
 
 bInt
 //:## Example: Square Roots
 count = 4
-var c:[Float] = [16,9,4,1]
-var cSquareRoots = floats(count)
+var c:[Float] = [16, 9, 4, 1]
+var cSquareRoots = floats(n: count)
 
-vvsqrtf( &cSquareRoots, &c, &count )
+vvsqrtf(&cSquareRoots, &c, &count)
 
 cSquareRoots
 //:## Example: Flipping Numbers Over
 count = 4
 var d:[Float] = [1/3, 2/5, 1/8, -3/1]
-var dFlipped = floats(count)
+var dFlipped = floats(n: count)
 
-vvrecf( &dFlipped, &d, &count )
+vvrecf(&dFlipped, &d, &count)
 
 dFlipped
 //:## Example: Taking a Sine
 let π: Float = 355/113
 count = 100
-var ramp = floats(count)
+var ramp = floats(n: count)
 var rampStart: Float = 0
-var rampIncrease: Float = 1/(5 * π) //Float(count) / (2 * π)
+var rampIncrease: Float = 1 / (5 * π) // Float(count) / (2 * π)
 
-var rampSin = floats(count)
+var rampSin = floats(n: count)
 
-vDSP_vramp( &rampStart, &rampIncrease, &ramp, 1, vDSP_Length(count) )
+vDSP_vramp(&rampStart, &rampIncrease, &ramp, 1, vDSP_Length(count))
 ramp
 
-vvsinpif( &rampSin, &ramp, &count )
+vvsinpif(&rampSin, &ramp, &count)
 
 rampSin.map { $0 }
 //:## Act _now_ and we'll throw in this _Cosine_ for free!
-var rampCos = floats(count)
-rampIncrease = 1/5
-vDSP_vramp( &rampStart, &rampIncrease, &ramp, 1, vDSP_Length(count) )
+var rampCos = floats(n: count)
+rampIncrease = 1 / 5
+vDSP_vramp(&rampStart, &rampIncrease, &ramp, 1, vDSP_Length(count))
 ramp
 
-vvsincosf( &rampSin, &rampCos, &ramp, &count )
+vvsincosf(&rampSin, &rampCos, &ramp, &count)
 
 rampSin.map { $0 }
 

@@ -1,18 +1,18 @@
 import Cocoa
 import CoreImage
 import Accelerate
-import XCPlayground
+import PlaygroundSupport
 
-let cookiesURL = NSURL(fileURLWithPath: NSBundle.mainBundle().pathForImageResource("boobie.png")!)
+let cookiesURL = NSURL(fileURLWithPath: Bundle.main.pathForImageResource("boobie.png")!)
 let imageSource = CGImageSourceCreateWithURL(cookiesURL, nil)
 let image = CGImageSourceCreateImageAtIndex(imageSource!, 0, nil)!
 
-let width = CGImageGetWidth(image)
-let height = CGImageGetHeight(image)
-let bytesPerRow = CGImageGetBytesPerRow(image)
+let width = image.width
+let height = image.height
+let bytesPerRow = image.bytesPerRow
 let size = NSMakeSize(CGFloat(width), CGFloat(height))
 
-let nsImage = NSImage(CGImage: image, size: size)
+let nsImage = NSImage(cgImage: image, size: size)
 var frame = NSMakeRect(0, 0, 0, 0)
 frame.size = size
 let playgroundView = NSImageView(frame: frame)
@@ -23,9 +23,9 @@ var backgroundColor : Array<UInt8> = [0,0,0,0]
 let fillBackground: vImage_Flags = UInt32(kvImageBackgroundColorFill)
 
 func doStuff() {
-	let inProvider = CGImageGetDataProvider(image)
-	let providerCopy = CGDataProviderCopyData(inProvider)
-	let inBitmapData = UnsafeMutablePointer<UInt8>(CFDataGetBytePtr(providerCopy))
+    guard let inProvider = image.dataProvider else { return }
+    let providerCopy = inProvider.data
+    let inBitmapData = UnsafeMutableRawPointer(mutating: CFDataGetBytePtr(providerCopy))
 	
 	var inBuffer = vImage_Buffer(data: inBitmapData, height: UInt(height), width: UInt(width), rowBytes: bytesPerRow)
 	
@@ -48,27 +48,28 @@ func doStuff() {
 	
 	vImageHorizontalReflect_ARGB8888(&inBuffer, &outBuffer, fillBackground)
 	
-	let context = CGBitmapContextCreate(outBuffer.data, width, height, 8, outBuffer.rowBytes, colorSpace, CGImageAlphaInfo.NoneSkipLast.rawValue)
+    guard let context = CGContext(data: outBuffer.data, width: width, height: height, bitsPerComponent: 8, bytesPerRow: outBuffer.rowBytes, space: colorSpace, bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) else { return }
 	
-	let outCGimage = CGBitmapContextCreateImage(context)
+    let outCGimage = context.makeImage()
 	
-	playgroundView.image = NSImage(CGImage: outCGimage!, size: size)
+    playgroundView.image = NSImage(cgImage: outCGimage!, size: size)
 	
 	free(pixelBuffer)
 }
 
 class Controller: NSViewController {
-	override func mouseDown(event: NSEvent) {
-		doStuff()
-	}
-	
-	override func mouseUp(event: NSEvent) {
-		playgroundView.image = nsImage
-	}
+    
+    override func mouseDown(with event: NSEvent) {
+        doStuff()
+    }
+    
+    override func mouseUp(with event: NSEvent) {
+        playgroundView.image = nsImage
+    }
 }
 
 let controller = Controller()
 controller.view = playgroundView
 
-XCPlaygroundPage.currentPage.liveView = playgroundView
-XCPlaygroundPage.currentPage.needsIndefiniteExecution = true
+PlaygroundPage.current.liveView = playgroundView
+PlaygroundPage.current.needsIndefiniteExecution = true
